@@ -1,98 +1,455 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# GAP Service Request Management API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A RESTful API built with NestJS for managing service requests between clients and service providers in building facilities.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Features
 
-## Description
+- User management (clients and service providers)
+- Service request creation and assignment
+- Status workflow management (open → in_progress → done)
+- Role-based access control
+- Request filtering and listing
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Tech Stack
 
-## Project setup
+- **Framework**: NestJS (TypeScript)
+- **Database**: MongoDB with Mongoose
+- **Validation**: class-validator & class-transformer
+- **Testing**: Jest
 
-```bash
-$ npm install
-```
+## Prerequisites
 
-## Compile and run the project
+- Node.js (v16 or higher)
+- Docker (for MongoDB)
+- npm or yarn
+
+## Installation
+
+### 1. Clone the repository
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+git clone https://github.com/siddhantagwl/gap-api.git
+cd gap-api
 ```
 
-## Run tests
+### 2. Install dependencies
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+npm install
 ```
 
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+### 3. Start MongoDB with Docker
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+docker run -d -p 27017:27017 --name mongodb mongo
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+### 4. Run the application
 
-## Resources
+```bash
+npm run start:dev
+```
 
-Check out a few resources that may come in handy when working with NestJS:
+The API will be available at `http://localhost:3000`
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+## API Endpoints
 
-## Support
+### Users
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+#### Create a User
 
-## Stay in touch
+**Request:**
+```http
+POST /users
+Content-Type: application/json
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+{
+  "name": "test user 1",
+  "email": "test_user@gap.com",
+  "role": "client"
+}
+```
 
-## License
+**Response:**
+```json
+{
+  "_id": "671e8f2a3c9d4b001f8e4c21",
+  "name": "test user 1",
+  "email": "test_user@gap.com",
+  "role": "client",
+  "__v": 0
+}
+```
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+#### Get User by ID
+
+**Request:**
+```http
+GET /users/:id
+```
+
+**Response:**
+```json
+{
+  "_id": "671e8f2a3c9d4b001f8e4c21",
+  "name": "test user 1",
+  "email": "test_user@gap.com",
+  "role": "client",
+  "__v": 0
+}
+```
+
+### Service Requests
+
+#### Create a Service Request
+
+**Request:**
+```http
+POST /service-requests
+Content-Type: application/json
+
+{
+  "title": "Fix elevator",
+  "description": "Elevator stuck on 5th floor",
+  "createdBy": "671e8f2a3c9d4b001f8e4c21"
+}
+```
+
+**Response:**
+```json
+{
+  "_id": "671e9a5b4d8e3f001c2a1b3c",
+  "title": "Fix elevator",
+  "description": "Elevator stuck on 5th floor",
+  "status": "open",
+  "createdBy": "671e8f2a3c9d4b001f8e4c21",
+  "__v": 0
+}
+```
+
+> **Note:** Only users with role `client` can create requests
+
+#### Assign Request to Service Provider
+
+**Request:**
+```http
+PATCH /service-requests/:id/assign/:userId
+```
+
+**Example:**
+```http
+PATCH /service-requests/671e9a5b4d8e3f001c2a1b3c/assign/671e8f5c3c9d4b001f8e4c22
+```
+
+**Response:**
+```json
+{
+  "_id": "671e9a5b4d8e3f001c2a1b3c",
+  "title": "Fix elevator",
+  "description": "Elevator stuck on 5th floor",
+  "status": "open",
+  "createdBy": "671e8f2a3c9d4b001f8e4c21",
+  "assignedTo": "671e8f5c3c9d4b001f8e4c22",
+  "__v": 0
+}
+```
+
+> Only users with role `service_provider` can be assigned
+
+#### Update Request Status
+
+**Request:**
+```http
+PATCH /service-requests/:id/status
+Content-Type: application/json
+
+{
+  "status": "in_progress"
+}
+```
+
+**Response:**
+```json
+{
+  "_id": "671e9a5b4d8e3f001c2a1b3c",
+  "title": "Fix elevator",
+  "description": "Elevator stuck on 5th floor",
+  "status": "in_progress",
+  "createdBy": "671e8f2a3c9d4b001f8e4c21",
+  "assignedTo": "671e8f5c3c9d4b001f8e4c22",
+  "__v": 0
+}
+```
+
+> **Note:** Status can only move forward: `open` → `in_progress` → `done`
+
+#### List Service Requests
+
+**Request:**
+```http
+GET /service-requests
+```
+
+**Response:**
+```json
+[
+  {
+    "_id": "671e9a5b4d8e3f001c2a1b3c",
+    "title": "Fix elevator",
+    "description": "Elevator stuck on 5th floor",
+    "status": "open",
+    "createdBy": {
+      "_id": "671e8f2a3c9d4b001f8e4c21",
+      "name": "test user 1",
+      "email": "test_user@gap.com",
+      "role": "client"
+    },
+    "assignedTo": null,
+    "__v": 0
+  }
+]
+```
+
+**we. can filter by status:**
+```http
+GET /service-requests?status=open
+GET /service-requests?status=in_progress
+GET /service-requests?status=done
+```
+
+## Business Rules as stated:
+
+1. **Only clients can create service requests**
+   - Service providers cannot create requests
+   - Attempting to create a request with a service provider will return `403 Forbidden`
+
+2. **Only service providers can be assigned**
+   - Clients cannot be assigned to requests
+   - Attempting to assign a client will return `403 Forbidden`
+
+3. **Status progression is one-way**
+   - Requests can only move forward: `open` → `in_progress` → `done`
+   - Cannot skip statuses (e.g., `open` → `done`)
+   - Cannot move backwards (e.g., `done` → `open`)
+   - Attempting invalid transitions will return `403 Forbidden`
+
+
+## Running Tests
+
+```bash
+# Run all tests
+npm test
+```
+
+**Test Results:**
+```
+Test Suites: 5 passed, 5 total
+Tests:       11 passed, 11 total
+```
+
+## Testing with Postman as i did on my mac
+
+### Step 1: Create a Client User
+
+```http
+POST http://localhost:3000/users
+Content-Type: application/json
+
+{
+  "name": "test user 1",
+  "email": "john@test.com",
+  "role": "client"
+}
+```
+
+Copy the `_id` from the response.
+
+### Step 2: Create a Service Provider
+
+```http
+POST http://localhost:3000/users
+Content-Type: application/json
+
+{
+  "name": "Jane Smith",
+  "email": "jane@test.com",
+  "role": "service_provider"
+}
+```
+
+Copy the `_id` from the response.
+
+### Step 3: Create a Service Request
+
+```http
+POST http://localhost:3000/service-requests
+Content-Type: application/json
+
+{
+  "title": "Fix AC",
+  "description": "Air conditioning not cooling",
+  "createdBy": "CLIENT_ID_HERE"
+}
+```
+
+Replace `CLIENT_ID_HERE` with the client's ID from Step 1.
+
+### Step 4: Assign to Service Provider
+
+```http
+PATCH http://localhost:3000/service-requests/REQUEST_ID/assign/PROVIDER_ID
+```
+
+Replace:
+- `REQUEST_ID` with the service request ID from Step 3
+- `PROVIDER_ID` with the service provider ID from Step 2
+
+### Step 5: Update Status
+
+```http
+PATCH http://localhost:3000/service-requests/REQUEST_ID/status
+Content-Type: application/json
+
+{
+  "status": "in_progress"
+}
+```
+
+### Step 6: Update Status Again
+
+```http
+PATCH http://localhost:3000/service-requests/REQUEST_ID/status
+Content-Type: application/json
+
+{
+  "status": "done"
+}
+```
+
+### Step 7: List All Requests
+
+```http
+GET http://localhost:3000/service-requests
+```
+
+### Step 8: Filter by Status
+
+```http
+GET http://localhost:3000/service-requests?status=open
+```
+
+## Error Handling
+
+The API returns appropriate HTTP status codes:
+
+| Status Code | Description |
+|------------|-------------|
+| `200` | Success |
+| `201` | Created |
+| `400` | Bad Request (validation errors) |
+| `403` | Forbidden (business rule violations) |
+| `404` | Not Found |
+| `500` | Internal Server Error |
+
+## Validation Examples
+
+### Invalid Role
+
+**Request:**
+```json
+{
+  "name": "Test User",
+  "email": "test@test.com",
+  "role": "admin"
+}
+```
+
+**Response:**
+```json
+{
+  "statusCode": 400,
+  "message": [
+    "role must be one of the following values: client, service_provider"
+  ],
+  "error": "Bad Request"
+}
+```
+
+### Invalid Email
+
+**Request:**
+```json
+{
+  "name": "Test User",
+  "email": "not-an-email",
+  "role": "client"
+}
+```
+
+**Response:**
+```json
+{
+  "statusCode": 400,
+  "message": [
+    "email must be an email"
+  ],
+  "error": "Bad Request"
+}
+```
+
+### Service Provider Creating Request
+
+**Request:**
+```json
+{
+  "title": "Fix elevator",
+  "description": "Test",
+  "createdBy": "SERVICE_PROVIDER_ID"
+}
+```
+
+**Response:**
+```json
+{
+  "statusCode": 403,
+  "message": "Only clients can create service requests",
+  "error": "Forbidden"
+}
+```
+
+### Client Being Assigned to Request
+
+**Request:**
+```http
+PATCH /service-requests/req_id/assign/c_id
+```
+
+**Response:**
+```json
+{
+  "statusCode": 403,
+  "message": "Only service providers can be assigned to requests",
+  "error": "Forbidden"
+}
+```
+
+### Invalid Status Transition
+
+**Request:**
+```json
+{
+  "status": "done"
+}
+```
+
+When current status is `open`:
+
+**Response:**
+```json
+{
+  "statusCode": 403,
+  "message": "Cannot transition from open to done. Valid next status: in_progress",
+  "error": "Forbidden"
+}
+```
+
