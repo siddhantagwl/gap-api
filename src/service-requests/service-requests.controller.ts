@@ -1,4 +1,4 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, Patch, Param } from '@nestjs/common';
 import { ServiceRequestsService } from './service-requests.service';
 import { CreateServiceRequestDto } from './dto/create-service-request.dto';
 
@@ -12,4 +12,10 @@ export class ServiceRequestsController {
     // and passes it to the service layer to handle the business logic
     return this.service.create(dto);
   }
+
+    @Patch(':id/assign/:userId')
+    assign(@Param('id') id: string, @Param('userId') userId: string) {
+        return this.service.assign(id, userId);
+    }
+
 }
