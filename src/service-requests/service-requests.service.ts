@@ -58,7 +58,7 @@ export class ServiceRequestsService {
         /*
             open → in_progress - allowed
             in_progress → done - allowed
-            
+
             open → done  (can't skip)
             done → open  (can't go back)
             done → in_progress (can't go back)
@@ -84,6 +84,18 @@ export class ServiceRequestsService {
         // Update the status
         request.status = newStatus;
         return request.save();
+    }
+
+    async findAll(status?: string): Promise<ServiceRequest[]> {
+        // If status is provided, filter by it. Otherwise, get all.
+        const filter = status ? { status } : {};
+
+        // query the database
+        return this.serviceRequestModel
+        .find(filter)
+        .populate('createdBy', 'name email role') // Include user details so using populate method
+        .populate('assignedTo', 'name email role')
+        .exec();
     }
 
 }

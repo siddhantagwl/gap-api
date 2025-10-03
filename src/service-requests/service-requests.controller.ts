@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Patch, Param } from '@nestjs/common';
+import { Controller, Post, Body, Patch, Param, Get, Query } from '@nestjs/common';
 import { ServiceRequestsService } from './service-requests.service';
 import { CreateServiceRequestDto } from './dto/create-service-request.dto';
 import { UpdateStatusDto } from './dto/update-status.dto';
@@ -22,6 +22,11 @@ export class ServiceRequestsController {
     @Patch(':id/status')
     updateStatus(@Param('id') id: string, @Body() dto: UpdateStatusDto) {
         return this.service.updateStatus(id, dto.status);
+    }
+
+    @Get()
+    findAll(@Query('status') status?: string) {
+        return this.service.findAll(status);
     }
 
 }
