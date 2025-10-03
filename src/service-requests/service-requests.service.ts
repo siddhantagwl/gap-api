@@ -7,10 +7,16 @@ import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class ServiceRequestsService {
-  constructor(
-    @InjectModel(ServiceRequest.name) private serviceRequestModel: Model<ServiceRequest>,
-    private usersService: UsersService,
-  ) {}
+    constructor(
+        @InjectModel(ServiceRequest.name) private serviceRequestModel: Model<ServiceRequest>,
+        private usersService: UsersService,
+    ) {}
+
+    // Define the valid status transitions
+    private statusFlow = {
+        open: 'in_progress',
+        in_progress: 'done', // final is done , no further transitions
+    };
 
     async create(dto: CreateServiceRequestDto): Promise<ServiceRequest> {
         // Check if the user exists and is a client sine only clients can create service requests
@@ -46,6 +52,38 @@ export class ServiceRequestsService {
         }
 
         return request;
+    }
+
+    async updateStatus(requestId: string, newStatus: string): Promise<ServiceRequest> {
+        /*
+            open → in_progress - allowed
+            in_progress → done - allowed
+            
+            open → done  (can't skip)
+            done → open  (can't go back)
+            done → in_progress (can't go back)
+        */
+
+        // Find the request
+        const request = await this.serviceRequestModel.findById(requestId);
+
+        if (!request) {
+            throw new NotFoundException('Service request not found');
+        }
+
+        const currentStatus = request.status;
+
+        // Check if the transition is valid
+        // Allow staying in the same status OR moving to the next valid status
+        if (this.statusFlow[currentStatus] !== newStatus && newStatus !== currentStatus) {
+            throw new ForbiddenException(
+                `Cannot transition from ${currentStatus} to ${newStatus}. Valid next status: ${this.statusFlow[currentStatus] || 'none (already at final status)'}`
+            );
+        }
+
+        // Update the status
+        request.status = newStatus;
+        return request.save();
     }
 
 }
