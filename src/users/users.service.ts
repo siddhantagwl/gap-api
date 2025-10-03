@@ -20,4 +20,17 @@ export class UsersService {
     }
     return user;
   }
+
+  async deleteAll(): Promise<{ deleted: number }> {
+    const result = await this.userModel.deleteMany({}).exec();
+    return { deleted: result.deletedCount };
+  }
+
+  async deleteById(id: string): Promise<void> {
+    const result = await this.userModel.findByIdAndDelete(id).exec();
+    if (!result) {
+      throw new NotFoundException('User not found');
+    }
+  }
+  
 }

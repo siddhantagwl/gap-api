@@ -6,6 +6,7 @@ import {
   Param,
   Get,
   Query,
+  Delete,
 } from '@nestjs/common';
 import { ServiceRequestsService } from './service-requests.service';
 import { CreateServiceRequestDto } from './dto/create-service-request.dto';
@@ -35,5 +36,15 @@ export class ServiceRequestsController {
   @Get()
   findAll(@Query('status') status?: string) {
     return this.service.findAll(status);
+  }
+
+  @Delete()
+  deleteAll() {
+    return this.service.deleteAll();
+  }
+
+  @Delete(':id')
+  deleteOne(@Param('id') id: string) {
+    return this.service.deleteById(id);
   }
 }

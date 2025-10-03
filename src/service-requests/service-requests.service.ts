@@ -110,4 +110,17 @@ export class ServiceRequestsService {
       .populate('assignedTo', 'name email role')
       .exec();
   }
+
+  async deleteAll(): Promise<{ deleted: number }> {
+    const result = await this.serviceRequestModel.deleteMany({}).exec();
+    return { deleted: result.deletedCount };
+  }
+
+  async deleteById(id: string): Promise<void> {
+    const result = await this.serviceRequestModel.findByIdAndDelete(id).exec();
+    if (!result) {
+      throw new NotFoundException('Service request not found');
+    }
+  }
+  
 }
