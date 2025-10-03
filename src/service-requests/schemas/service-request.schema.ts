@@ -9,7 +9,11 @@ export class ServiceRequest extends Document {
   @Prop({ required: true })
   description: string;
 
-  @Prop({ required: true, enum: ['open', 'in_progress', 'done'], default: 'open' })
+  @Prop({
+    required: true,
+    enum: ['open', 'in_progress', 'done'],
+    default: 'open',
+  })
   status: string;
 
   @Prop({ type: Types.ObjectId, ref: 'User', required: true })
@@ -19,4 +23,5 @@ export class ServiceRequest extends Document {
   assignedTo?: Types.ObjectId; // optional field
 }
 
-export const ServiceRequestSchema = SchemaFactory.createForClass(ServiceRequest);
+export const ServiceRequestSchema =
+  SchemaFactory.createForClass(ServiceRequest);
